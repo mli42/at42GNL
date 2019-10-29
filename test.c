@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/26 13:55:01 by mli               #+#    #+#             */
-/*   Updated: 2019/10/29 15:43:46 by mli              ###   ########.fr       */
+/*   Created: 2019/10/29 11:53:29 by mli               #+#    #+#             */
+/*   Updated: 2019/10/29 16:02:02 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,29 +17,25 @@
 
 int		main(int argc, char **argv)
 {
-	char	*line;
+	int		have_read;
+	char	line[5];
 	int		fd;
-	int		gnl_r;
 
 	if (argc == 2)
 	{
 		if ((fd = open(argv[1], O_RDONLY)))
 		{
-			while (gnl_r = get_next_line(fd, &line) == 1)
-			{
-				printf("%s\n", line);
-				free(line);
-			}
-			if (gnl_r == 0)
-			{
-				printf("%s\n", line);
-				free(line);
-			}
-			else if (gnl_r == -1)
-			{
-				free(line);
-				printf("Had an error\n");
-			}
+			read(fd, line, 5);
+			write(1, line, 5);
+			write(1, "\n", 1);
+
+			read(fd, line, 5);
+			write(1, line, 5);
+			write(1, "\n", 1);
+
+			have_read = read(fd, line, 5);
+			write(1, line, have_read);
+			write(1, "\n", 1);
 		}
 		if (fd)
 			close(fd);
