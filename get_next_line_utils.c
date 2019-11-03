@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:45:35 by mli               #+#    #+#             */
-/*   Updated: 2019/11/02 18:51:25 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/03 15:38:10 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@ t_list		*ft_lstnew(char *str)
 
 	if (!(new = (t_list *)malloc(sizeof(*new))))
 		return (NULL);
-	new->content = str;
+	new->tab = str;
 	new->min = 0;
+	new->max = BUFFER_SIZE;
 	new->next = NULL;
 	return (new);
 }

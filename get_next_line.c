@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/02 18:48:57 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/03 16:39:18 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,32 +23,39 @@ int		ft_has_sentence(char *str, int min, int max)
 	return (0);
 }
 
-void	ft_found(char *src, char **line, int size)
+int		ft_found(char *src, char **line, int size, int *min)
 {
-	int begin;
+	int i;
 
-	begin = 0;
 	if (!(*line = (char *)malloc(sizeof(char) * size)))
 		return (-1);
-	while (--size >= 0)
-		line[size] = src[begin++];
+	i = 0;
+	while (i < size - 1)
+		line[0][i++] = src[(*min)++];
+	line[0][i] = '\0';
 	return (1);
 }
 
 int		ft_get_line(int fd, char **line, t_list **alst)
 {
-	int			max;
 	int			size;
-	char		*tab;
-	t_list		*list;
+	//char		*tab;
+	t_list		*lst;
 
-	list = *alst;
-	tab = list->content;
-	if (tab != NULL)
-		if ((size = ft_has_sentence(tab, BUFFER_SIZE)));
+	lst = *alst;
+	if (lst->tab == NULL)
+	{
+		if (!(lst->tab = (char *)malloc(sizeof(char) * BUFFER_SIZE)))
+			return (-1);
+		lst->max = read(fd, lst->tab, BUFFER_SIZE);
+	}
+	if (lst->tab != NULL)
+		if ((size = ft_has_sentence(lst->tab, lst->min, lst->max)))
+			return (ft_found(lst->tab, line, size, &(lst->min)));
 
-	while (list && !ft_has_sentence(list->content))
-		list = list->next;
+
+//	while (list && list->content && !ft_has_sentence(list->content))
+//		list = list->next;
 
 
 

@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 13:55:01 by mli               #+#    #+#             */
-/*   Updated: 2019/11/03 11:14:01 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/03 16:23:20 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int		main(int argc, char **argv)
 	if (argc == 2)
 		if ((fd = open(argv[1], O_RDONLY)))
 		{
-			while (gnl_r = get_next_line(fd, &line) == 1)
+			while ((gnl_r = get_next_line(fd, &line)) == 1)
 			{
 				printf("RETURNED[1]:%s\n", line);
 				free(line);

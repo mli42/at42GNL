@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/02 11:23:00 by mli               #+#    #+#             */
-/*   Updated: 2019/11/02 16:22:00 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/03 14:59:30 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,37 +56,3 @@ int		get_next_line(int fd, char **line)
 		ft_total_remove_fd(&right_fd);
 	return (return_value);
 }
-
-/*
-int		main(int argc, char **argv)
-{
-	char	*line;
-	int		fd;
-	int		gnl_r;
-
-	if (argc == 2)
-	{
-		if ((fd = open(argv[1], O_RDONLY)))
-		{
-			while (gnl_r = get_next_line(fd, &line) == 1)
-			{
-				printf("%s\n", line);
-				free(line);
-			}
-			if (gnl_r == 0)
-			{
-				printf("%s\n", line);
-				free(line);
-			}
-			else if (gnl_r == -1)
-			{
-				free(line);
-				printf("Had an error\n");
-			}
-		}
-		if (fd)
-			close(fd);
-	}
-	return (0);
-}
-*/

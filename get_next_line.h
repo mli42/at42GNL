@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:43:26 by mli               #+#    #+#             */
-/*   Updated: 2019/11/02 18:51:29 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/03 16:21:30 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@
 typedef struct	s_list
 {
 	int				min;
-	char			*content;
+	int				max;
+	char			*tab;
 	struct s_list	*next;
 }				t_list;
 
@@ -29,5 +30,9 @@ typedef struct	s_struct
 	t_list			*list;
 	struct s_struct	*next;
 }				t_struct;
+
+int				get_next_line(int fd, char **line);
+int				ft_get_line(int fd, char **line, t_list **alst);
+t_struct		*ft_addfront_fd(t_struct **astruct, int fd);
 
 #endif
