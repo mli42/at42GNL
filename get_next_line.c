@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/05 19:14:27 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/06 00:40:05 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,19 @@ int		ft_found(char **line, t_list **alst, int size)
 	return (1);
 }
 
+int		ft_lstsize(t_list *lst)
+{
+	int i;
+
+	i = 0;
+	while (lst)
+	{
+		i += lst->max;
+		lst = lst->next;
+	}
+	return (i);
+}
+
 int		ft_get_line(int fd, char **line, t_list **alst)
 {
 	int			size;
@@ -89,7 +102,7 @@ int		ft_get_line(int fd, char **line, t_list **alst)
 		lst->max = read(fd, lst->tab, BUFFER_SIZE);
 	}
 	// Something found ! Either a \n or EOF
-	if (ft_found(line, alst, size) == -1)
+	if (ft_found(line, alst, (size ? size : ft_lstsize(*alst))) == -1)
 		return (-1);
 	return ((size ? 1 : 0));
 }
