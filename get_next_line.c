@@ -6,55 +6,67 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/05 11:54:01 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/05 17:50:23 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		ft_has_sentence(t_list *lst, int min, int max)
+int		ft_has_sentence(t_list **begin_list, int min, int max)
 {
-	int		i;
+	int		size;
 	char	*str;
+	t_list	*lst;
 
-	i = min;
-	// New feature
-	// New feature
-	while (min > BUFFER_SIZE && lst->next)
+	size = 0;
+	lst = *begin_list;
+	while (lst->next)
 	{
+		size += BUFFER_SIZE;
 		lst = lst->next;
-		min -= BUFFER_SIZE;
-// 	?	max -= BUFFER_SIZE;
 	}
-	// New feature
 	str = lst->tab;
-	// New feature
 	while (min < max)
+	{
+		size++;
 		if (str[min++] == '\n')
-			return (min - i);
+			return (size);
+	}
 	return (0);
 }
 
-int		ft_found(char *src, char **line, int size, int *min)
+int		ft_found(char **line, t_list **alst, int size)
 {
-	int i;
+	int		i;
+	char	*src;
+	t_list	*lst;
+	t_list	*tmp;
 
+	i = 0;
+	lst = *alst;
 	if (!(*line = (char *)malloc(sizeof(char) * size)))
 		return (-1);
-	i = 0;
-	while (i < size - 1)
-		line[0][i++] = src[(*min)++];
+	while ((i < size - 1) && (src = lst->tab))
+	{
+		line[0][i++] = src[(lst->min)++];
+		if ((lst->min == lst->max) && lst->next)
+		{
+			tmp = lst->next;
+			free(lst->tab);
+			free(lst);
+			lst = tmp;
+		}
+	}
 	line[0][i] = '\0';
-	(*min)++;
+	(lst->min)++;
+	*alst = lst;
 	return (1);
 }
 
-int		ft_nothing_found_yet(t_list **alst)
+int		ft_nothing_found_yet(t_list *lst)
 {
-	t_list		*lst;
 	char		*tmp_tab;
 
-	lst = *alst;
 	if (!(tmp_tab = (char *)malloc(sizeof(char) * BUFFER_SIZE)))
 		return (-1);
 	if (!(lst->next = ft_lstnew(tmp_tab)))
@@ -86,7 +98,7 @@ int		ft_get_line(int fd, char **line, t_list **alst)
 	while (((size = ft_has_sentence(lst, lst->min, lst->max)) == 0) ||
 			(lst->max == BUFFER_SIZE))
 	{
-		ft_nothing_found_yet(alst);
+		ft_nothing_found_yet(lst);
 	}
 	// Something found !
 
@@ -94,4 +106,3 @@ int		ft_get_line(int fd, char **line, t_list **alst)
 	line[0][0] = '\0';
 	return (0);
 }
-

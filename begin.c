@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/02 11:23:00 by mli               #+#    #+#             */
-/*   Updated: 2019/11/03 14:59:30 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/05 16:26:30 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@ int		get_next_line(int fd, char **line)
 	t_struct			*right_fd;
 
 	right_fd = begin_fd;
+	// Have to protect
+	if (!line || fd < 0 || BUFFER_SIZE <= 0)
+		return (-1);
 	//		Looking for the right fd, or create it
 	while (right_fd && right_fd->fd != fd)
 		right_fd = right_fd->next;
