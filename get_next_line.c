@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/05 17:50:23 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/05 19:14:27 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,22 +63,11 @@ int		ft_found(char **line, t_list **alst, int size)
 	return (1);
 }
 
-int		ft_nothing_found_yet(t_list *lst)
-{
-	char		*tmp_tab;
-
-	if (!(tmp_tab = (char *)malloc(sizeof(char) * BUFFER_SIZE)))
-		return (-1);
-	if (!(lst->next = ft_lstnew(tmp_tab)))
-		return (-1);
-	lst = lst->next;
-	lst->max = read(fd, lst->tab, BUFFER_SIZE);
-}
-
 int		ft_get_line(int fd, char **line, t_list **alst)
 {
 	int			size;
 	t_list		*lst;
+	char		*tmp_tab;
 
 	lst = *alst;
 	// Init la "static"
@@ -89,20 +78,18 @@ int		ft_get_line(int fd, char **line, t_list **alst)
 		lst->max = read(fd, lst->tab, BUFFER_SIZE);
 	}
 	// Cherche \n dans ma "static"
-	if (lst->tab != NULL)
-		if ((size = ft_has_sentence(lst, lst->min, lst->max)))
-			return (ft_found(lst->tab, line, size, &(lst->min)));
-
-	// Pas de \n trouvé =>
 	// On va read jusqu'à trouver \n || read < BUFF_SIZE == EOF
-	while (((size = ft_has_sentence(lst, lst->min, lst->max)) == 0) ||
+	while (((size = ft_has_sentence(alst, lst->min, lst->max)) == 0) &&
 			(lst->max == BUFFER_SIZE))
 	{
-		ft_nothing_found_yet(lst);
+		if ((!(tmp_tab = (char *)malloc(sizeof(char) * BUFFER_SIZE))) ||
+			(!(lst->next = ft_lstnew(tmp_tab))))
+			return (-1);
+		lst = lst->next;
+		lst->max = read(fd, lst->tab, BUFFER_SIZE);
 	}
-	// Something found !
-
-	*line = malloc(1);
-	line[0][0] = '\0';
-	return (0);
+	// Something found ! Either a \n or EOF
+	if (ft_found(line, alst, size) == -1)
+		return (-1);
+	return ((size ? 1 : 0));
 }
