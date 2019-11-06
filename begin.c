@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/02 11:23:00 by mli               #+#    #+#             */
-/*   Updated: 2019/11/05 16:26:30 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/06 17:02:11 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,31 @@
 //#include <stdio.h>
 //#include <fcntl.h>
 
-void	ft_total_remove_fd(t_struct **right_fd)
+void	ft_total_remove_fd(t_struct **begin_fd, t_struct *to_delete_fd)
 {
 	t_list		*current;
 	t_list		*then;
-	t_struct	*to_delete;
+	t_struct	*tmp_fd;
 
-	current = (*right_fd)->list;
+	current = to_delete_fd->list;
 	while (current)
 	{
 		then = current->next;
 		free(current);
 		current = then;
 	}
-	(*right_fd)->list = NULL;
+	to_delete_fd->list = NULL;
 	// Last to do
-	to_delete = *right_fd;
-	*right_fd = to_delete->next;
-	free(to_delete);
+	if (*begin_fd == to_delete_fd)
+		*begin_fd = to_delete_fd->next;
+	else
+	{
+		tmp_fd = *begin_fd;
+		while (tmp_fd->next && tmp_fd->next != to_delete_fd)
+			tmp_fd = tmp_fd->next;
+		tmp_fd->next = tmp_fd->next->next;
+	}
+	free(to_delete_fd);
 }
 
 int		get_next_line(int fd, char **line)
@@ -56,6 +63,6 @@ int		get_next_line(int fd, char **line)
 	}
 	return_value = ft_get_line(fd, line, &(right_fd->list));
 	if (return_value == 0 || return_value == (-1))
-		ft_total_remove_fd(&right_fd);
+		ft_total_remove_fd(&begin_fd, right_fd);
 	return (return_value);
 }
