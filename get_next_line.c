@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/07 19:11:18 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/07 20:00:00 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,24 @@ int		ft_has_sentence(t_list **begin_list, int min, int max)
 	return (0);
 }
 
+void	ft_lstremove(t_list **alst)
+{
+	t_list	*tmp;
+
+	while ((*alst)->next)
+	{
+		tmp = (*alst);
+		*alst = (*alst)->next;
+		free(tmp->tab);
+		free(tmp);
+	}
+}
+
 int		ft_found(char **line, t_list **alst, int size)
 {
 	int		i;
 	char	*src;
 	t_list	*lst;
-	t_list	*tmp;
 
 	i = 0;
 	lst = *alst;
@@ -51,17 +63,14 @@ int		ft_found(char **line, t_list **alst, int size)
 	{
 		if ((lst->min >= lst->max) && lst->next)
 		{
-			tmp = lst->next;
-			free(lst->tab);
-			free(lst);
-			lst = tmp;
+			lst = lst->next;
 			src = lst->tab;
 		}
 		line[0][i++] = src[(lst->min)++];
 	}
 	line[0][i] = '\0';
 	(lst->min)++;
-	*alst = lst;
+	ft_lstremove(alst);
 	return (1);
 }
 
