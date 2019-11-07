@@ -6,11 +6,24 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:45:35 by mli               #+#    #+#             */
-/*   Updated: 2019/11/03 15:38:10 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/07 21:45:40 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+char		*ft_calloc(int size)
+{
+	int		i;
+	char	*str;
+
+	if (!(str = (char *)malloc(size)))
+		return (NULL);
+	i = 0;
+	while (i < size)
+		str[i++] = '\0';
+	return (str);
+}
 
 t_list		*ft_lstnew(char *str)
 {
