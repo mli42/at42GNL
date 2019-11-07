@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/06 18:39:00 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/07 19:11:18 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,20 @@ int		ft_found(char **line, t_list **alst, int size)
 
 	i = 0;
 	lst = *alst;
+	src = lst->tab;
 	if (!(*line = (char *)malloc(sizeof(char) * size)))
 		return (-1);
-	while ((i < size - 1) && (src = lst->tab))
+	while (i < size - 1)
 	{
-		line[0][i++] = src[(lst->min)++];
-		if ((lst->min == lst->max) && lst->next)
+		if ((lst->min >= lst->max) && lst->next)
 		{
 			tmp = lst->next;
 			free(lst->tab);
 			free(lst);
 			lst = tmp;
+			src = lst->tab;
 		}
+		line[0][i++] = src[(lst->min)++];
 	}
 	line[0][i] = '\0';
 	(lst->min)++;
