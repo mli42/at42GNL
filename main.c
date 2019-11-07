@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 13:55:01 by mli               #+#    #+#             */
-/*   Updated: 2019/11/03 16:23:20 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/07 17:12:11 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,28 +18,31 @@
 int		main(int argc, char **argv)
 {
 	char	*line;
-	int		fd;
 	int		gnl_r;
+	int		fd = -1;
 
-	if (argc == 2)
-		if ((fd = open(argv[1], O_RDONLY)))
+	if (argc == 1)
+		fd = 0;
+	else if (argc == 2)
+		fd = open(argv[1], O_RDONLY);
+	if (fd >= 0)
+	{
+		while ((gnl_r = get_next_line(fd, &line)) == 1)
 		{
-			while ((gnl_r = get_next_line(fd, &line)) == 1)
-			{
-				printf("RETURNED[1]:%s\n", line);
-				free(line);
-			}
-			if (gnl_r == 0)
-			{
-				printf("RETURNED[0]:%s\n", line);
-				free(line);
-			}
-			else if (gnl_r == -1)
-			{
-				printf("RETURNED[-1]:\tHAD AN ERROR || STOP\n");
-				free(line);
-			}
-			close(fd);
+			printf("RETURNED[1]:%s\n", line);
+			free(line);
 		}
+		if (gnl_r == 0)
+		{
+			printf("RETURNED[0]:%s\n", line);
+			free(line);
+		}
+		else if (gnl_r == -1)
+		{
+			printf("RETURNED[-1]:\tHAD AN ERROR || STOP\n");
+			free(line);
+		}
+		close(fd);
+	}
 	return (0);
 }
