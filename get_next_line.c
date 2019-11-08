@@ -6,11 +6,13 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/07 20:00:00 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/08 21:59:08 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+#include <stdio.h>
 
 int		ft_has_sentence(t_list **begin_list, int min, int max)
 {
@@ -22,7 +24,7 @@ int		ft_has_sentence(t_list **begin_list, int min, int max)
 	lst = *begin_list;
 	while (lst->next)
 	{
-		size += BUFFER_SIZE;
+		size += lst->max - lst->min;
 		lst = lst->next;
 	}
 	str = lst->tab;
@@ -30,7 +32,9 @@ int		ft_has_sentence(t_list **begin_list, int min, int max)
 	{
 		size++;
 		if (str[min++] == '\n')
+		{
 			return (size);
+		}
 	}
 	return (0);
 }
