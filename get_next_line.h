@@ -6,13 +6,9 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:43:26 by mli               #+#    #+#             */
-/*   Updated: 2019/11/08 22:07:13 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/08 22:24:48 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 32
-# endif
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
