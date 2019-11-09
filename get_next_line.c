@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/09 13:42:00 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/09 23:41:54 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,6 @@ int		ft_get_line(int fd, char **line, t_list **alst)
 {
 	int			size;
 	t_list		*lst;
-	char		*tmp_tab;
 
 	lst = *alst;
 	// Init la "static"
@@ -111,8 +110,8 @@ int		ft_get_line(int fd, char **line, t_list **alst)
 	while (((size = ft_has_sentence(alst, lst->min, lst->max)) == 0) &&
 			(lst->max == BUFFER_SIZE))
 	{
-		if ((!(tmp_tab = (char *)ft_calloc(sizeof(char) * BUFFER_SIZE))) ||
-			(!(lst->next = ft_lstnew(tmp_tab))))
+		if ((!(lst->next = ft_lstnew(NULL))) ||
+			(!(lst->next->tab = (char *)ft_calloc(sizeof(char) * BUFFER_SIZE))))
 			return (-1);
 		lst = lst->next;
 		lst->max = read(fd, lst->tab, BUFFER_SIZE);

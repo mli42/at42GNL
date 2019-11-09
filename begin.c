@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/02 11:23:00 by mli               #+#    #+#             */
-/*   Updated: 2019/11/07 17:48:00 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/09 23:39:21 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void	ft_total_remove_fd(t_struct **begin_fd, t_struct *to_delete_fd)
 	while (current)
 	{
 		then = current->next;
+		if (current->tab)
+			free(current->tab);
 		free(current);
 		current = then;
 	}
