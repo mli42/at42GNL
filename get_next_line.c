@@ -6,16 +6,11 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/09 23:41:54 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/10 21:43:00 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-
-
-
-#include <stdio.h>
 
 int		ft_has_sentence(t_list **begin_list, int min, int max)
 {
@@ -73,6 +68,8 @@ int		ft_found(char **line, t_list **alst, int size)
 		}
 		line[0][i++] = src[(lst->min)++];
 	}
+	if ((lst->min >= lst->max) && lst->next)
+		lst = lst->next;
 	line[0][i] = '\0';
 	(lst->min)++;
 	ft_lstremove(alst);
