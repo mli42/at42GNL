@@ -6,7 +6,7 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/10 21:43:00 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/10 23:57:03 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,18 +100,20 @@ int		ft_get_line(int fd, char **line, t_list **alst)
 	{
 		if (!(lst->tab = (char *)ft_calloc(sizeof(char) * BUFFER_SIZE)))
 			return (-1);
-		lst->max = read(fd, lst->tab, BUFFER_SIZE);
+		if ((lst->max = read(fd, lst->tab, BUFFER_SIZE)) == -1)
+			return (-1);
 	}
 	// Cherche \n dans ma "static"
 	// On va read jusqu'à trouver \n || read < BUFF_SIZE == EOF
 	while (((size = ft_has_sentence(alst, lst->min, lst->max)) == 0) &&
-			(lst->max == BUFFER_SIZE))
+			(lst->max == BUFFER_SIZE || (fd == 0 && lst->max > 0)))
 	{
 		if ((!(lst->next = ft_lstnew(NULL))) ||
 			(!(lst->next->tab = (char *)ft_calloc(sizeof(char) * BUFFER_SIZE))))
 			return (-1);
 		lst = lst->next;
-		lst->max = read(fd, lst->tab, BUFFER_SIZE);
+		if ((lst->max = read(fd, lst->tab, BUFFER_SIZE)) == -1)
+			return (-1);
 	}
 	// Something found ! Either a \n or EOF
 	if (ft_found(line, alst, (size ? size : ft_lstsize(*alst))) == -1)
