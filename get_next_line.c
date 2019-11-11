@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
+/*   By: mli <mli@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/10 23:57:03 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/11 12:42:52 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int		ft_found(char **line, t_list **alst, int size)
 	i = 0;
 	lst = *alst;
 	src = lst->tab;
-	if (!(*line = (char *)ft_calloc(sizeof(char) * size)))
+	if (!(*line = (char *)malloc(sizeof(char) * size)))
 		return (-1);
 	while (i < size - 1)
 	{
@@ -95,27 +95,23 @@ int		ft_get_line(int fd, char **line, t_list **alst)
 	t_list		*lst;
 
 	lst = *alst;
-	// Init la "static"
 	if (lst->tab == NULL)
 	{
-		if (!(lst->tab = (char *)ft_calloc(sizeof(char) * BUFFER_SIZE)))
+		if (!(lst->tab = (char *)malloc(sizeof(char) * BUFFER_SIZE)))
 			return (-1);
 		if ((lst->max = read(fd, lst->tab, BUFFER_SIZE)) == -1)
 			return (-1);
 	}
-	// Cherche \n dans ma "static"
-	// On va read jusqu'à trouver \n || read < BUFF_SIZE == EOF
 	while (((size = ft_has_sentence(alst, lst->min, lst->max)) == 0) &&
 			(lst->max == BUFFER_SIZE || (fd == 0 && lst->max > 0)))
 	{
 		if ((!(lst->next = ft_lstnew(NULL))) ||
-			(!(lst->next->tab = (char *)ft_calloc(sizeof(char) * BUFFER_SIZE))))
+			(!(lst->next->tab = (char *)malloc(sizeof(char) * BUFFER_SIZE))))
 			return (-1);
 		lst = lst->next;
 		if ((lst->max = read(fd, lst->tab, BUFFER_SIZE)) == -1)
 			return (-1);
 	}
-	// Something found ! Either a \n or EOF
 	if (ft_found(line, alst, (size ? size : ft_lstsize(*alst))) == -1)
 		return (-1);
 	return ((size ? 1 : 0));

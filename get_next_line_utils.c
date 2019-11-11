@@ -6,24 +6,11 @@
 /*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:45:35 by mli               #+#    #+#             */
-/*   Updated: 2019/11/07 21:45:40 by mli              ###   ########.fr       */
+/*   Updated: 2019/11/11 12:39:23 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-char		*ft_calloc(int size)
-{
-	int		i;
-	char	*str;
-
-	if (!(str = (char *)malloc(size)))
-		return (NULL);
-	i = 0;
-	while (i < size)
-		str[i++] = '\0';
-	return (str);
-}
 
 t_list		*ft_lstnew(char *str)
 {
@@ -45,14 +32,63 @@ t_struct	*ft_addfront_fd(t_struct **astruct, int fd)
 	if (!(new = (t_struct *)malloc(sizeof(*new))))
 		return (NULL);
 	new->fd = fd;
-	// Initialize first maillon
 	if (!(new->list = ft_lstnew(NULL)))
 	{
 		free(new);
 		return (NULL);
 	}
-	// ADD FRONT
 	new->next = *astruct;
 	*astruct = new;
 	return (new);
+}
+
+void		ft_total_remove_fd(t_struct **begin_fd, t_struct *to_delete_fd)
+{
+	t_list		*current;
+	t_list		*then;
+	t_struct	*tmp_fd;
+
+	current = to_delete_fd->list;
+	while (current)
+	{
+		then = current->next;
+		if (current->tab)
+			free(current->tab);
+		free(current);
+		current = then;
+	}
+	to_delete_fd->list = NULL;
+	if (*begin_fd == to_delete_fd)
+		*begin_fd = to_delete_fd->next;
+	else
+	{
+		tmp_fd = *begin_fd;
+		while (tmp_fd->next && tmp_fd->next != to_delete_fd)
+			tmp_fd = tmp_fd->next;
+		tmp_fd->next = tmp_fd->next->next;
+	}
+	free(to_delete_fd);
+}
+
+int			get_next_line(int fd, char **line)
+{
+	int					return_value;
+	static t_struct		*begin_fd = NULL;
+	t_struct			*right_fd;
+
+	right_fd = begin_fd;
+	if (!line || fd < 0 || BUFFER_SIZE <= 0)
+		return (-1);
+	while (right_fd && right_fd->fd != fd)
+		right_fd = right_fd->next;
+	if (right_fd == NULL)
+	{
+		if (!ft_addfront_fd(&begin_fd, fd))
+			return (-1);
+		right_fd = begin_fd;
+	}
+	return_value = ft_get_line(fd, line, &(right_fd->list));
+	if (return_value == 0 || return_value == (-1))
+		ft_total_remove_fd(&begin_fd, right_fd);
+	return (return_value);
 }
