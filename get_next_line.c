@@ -5,78 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mli <mli@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/26 11:42:39 by mli               #+#    #+#             */
-/*   Updated: 2019/11/11 12:42:52 by mli              ###   ########.fr       */
+/*   Created: 2019/12/02 23:32:08 by mli               #+#    #+#             */
+/*   Updated: 2020/01/06 18:18:52 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		ft_has_sentence(t_list **begin_list, int min, int max)
-{
-	int		size;
-	char	*str;
-	t_list	*lst;
-
-	size = 0;
-	lst = *begin_list;
-	while (lst->next)
-	{
-		size += lst->max - lst->min;
-		lst = lst->next;
-	}
-	str = lst->tab;
-	while (min < max)
-	{
-		size++;
-		if (str[min++] == '\n')
-			return (size);
-	}
-	return (0);
-}
-
-void	ft_lstremove(t_list **alst)
-{
-	t_list	*tmp;
-
-	while ((*alst)->next)
-	{
-		tmp = (*alst);
-		*alst = (*alst)->next;
-		free(tmp->tab);
-		free(tmp);
-	}
-}
-
-int		ft_found(char **line, t_list **alst, int size)
-{
-	int		i;
-	char	*src;
-	t_list	*lst;
-
-	i = 0;
-	lst = *alst;
-	src = lst->tab;
-	if (!(*line = (char *)malloc(sizeof(char) * size)))
-		return (-1);
-	while (i < size - 1)
-	{
-		if ((lst->min >= lst->max) && lst->next)
-		{
-			lst = lst->next;
-			src = lst->tab;
-		}
-		line[0][i++] = src[(lst->min)++];
-	}
-	if ((lst->min >= lst->max) && lst->next)
-		lst = lst->next;
-	line[0][i] = '\0';
-	(lst->min)++;
-	ft_lstremove(alst);
-	return (1);
-}
-
-int		ft_lstsize(t_list *lst)
+int		ft_lstsize_gnl(t_gnl *lst)
 {
 	int i;
 
@@ -89,30 +25,72 @@ int		ft_lstsize(t_list *lst)
 	return (i);
 }
 
-int		ft_get_line(int fd, char **line, t_list **alst)
+int		ft_sentence(t_gnl **alist, int min, int max)
 {
-	int			size;
-	t_list		*lst;
+	int		size;
+	char	*tab;
+	t_gnl	*lst;
 
-	lst = *alst;
-	if (lst->tab == NULL)
+	size = 0;
+	lst = *alist;
+	while (lst->next)
 	{
-		if (!(lst->tab = (char *)malloc(sizeof(char) * BUFFER_SIZE)))
-			return (-1);
-		if ((lst->max = read(fd, lst->tab, BUFFER_SIZE)) == -1)
-			return (-1);
-	}
-	while (((size = ft_has_sentence(alst, lst->min, lst->max)) == 0) &&
-			(lst->max == BUFFER_SIZE || (fd == 0 && lst->max > 0)))
-	{
-		if ((!(lst->next = ft_lstnew(NULL))) ||
-			(!(lst->next->tab = (char *)malloc(sizeof(char) * BUFFER_SIZE))))
-			return (-1);
+		size += lst->max - lst->min;
 		lst = lst->next;
-		if ((lst->max = read(fd, lst->tab, BUFFER_SIZE)) == -1)
-			return (-1);
 	}
-	if (ft_found(line, alst, (size ? size : ft_lstsize(*alst))) == -1)
+	tab = lst->tab;
+	while (min < max)
+	{
+		size++;
+		if (tab[min++] == '\n')
+			return (size);
+	}
+	return (0);
+}
+
+int		ft_found(t_gnl **alist, char **line, int size)
+{
+	int		i;
+	char	*src;
+	t_gnl	*lst;
+
+	i = 0;
+	lst = *alist;
+	src = lst->tab;
+	if (!(*line = (char *)malloc(sizeof(char) * size)))
+		return (0);
+	while (i < size - 1)
+	{
+		if ((lst->min >= lst->max) && lst->next)
+		{
+			lst = lst->next;
+			src = lst->tab;
+		}
+		line[0][i++] = src[(lst->min)++];
+	}
+	if (lst->min >= lst->max && lst->next)
+		lst = lst->next;
+	line[0][i] = '\0';
+	(lst->min)++;
+	ft_lstclear_gnl(alist);
+	return (1);
+}
+
+int		ft_gnl(int fd, char **line, t_gnl **alist)
+{
+	int		size;
+	t_gnl	*list;
+
+	list = *alist;
+	while (((size = ft_sentence(alist, list->min, list->max)) == 0) &&
+			(list->max == BUFFER_SIZE || (fd == 0 && list->max > 0)))
+	{
+		if (!(list->next = ft_lstnew_gnl(fd)))
+			return (-1);
+		list = list->next;
+	}
+	size = (size > 0 ? size : ft_lstsize_gnl(*alist));
+	if (ft_found(alist, line, size) == 0)
 		return (-1);
-	return ((size ? 1 : 0));
+	return ((size > 0 ? 1 : 0));
 }

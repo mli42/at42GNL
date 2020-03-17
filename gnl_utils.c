@@ -1,27 +1,50 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   gnl_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
+/*   By: mli <mli@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/26 11:45:35 by mli               #+#    #+#             */
-/*   Updated: 2019/11/11 12:39:23 by mli              ###   ########.fr       */
+/*   Created: 2020/01/02 17:53:26 by mli               #+#    #+#             */
+/*   Updated: 2020/03/17 18:35:32 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-t_list		*ft_lstnew(char *str)
+void	ft_lstclear_gnl(t_gnl **alst)
 {
-	t_list	*new;
+	t_gnl	*tmp;
 
-	if (!(new = (t_list *)malloc(sizeof(*new))))
+	while ((*alst)->next)
+	{
+		tmp = (*alst);
+		*alst = (*alst)->next;
+		free(tmp->tab);
+		free(tmp);
+	}
+}
+
+t_gnl	*ft_lstnew_gnl(int fd)
+{
+	t_gnl	*new;
+
+	if (!(new = (t_gnl *)malloc(sizeof(t_gnl))))
 		return (NULL);
-	new->tab = str;
 	new->min = 0;
-	new->max = BUFFER_SIZE;
-	new->next = NULL;
+	if (!(new->tab = (char *)malloc(sizeof(char) * BUFFER_SIZE)))
+	{
+		free(new);
+		return (NULL);
+	}
+	if ((new->max = read(fd, new->tab, BUFFER_SIZE)) < 0)
+	{
+		free(new->tab);
+		new->tab = NULL;
+		free(new);
+		return (NULL);
+	}
+	new->next = 0;
 	return (new);
 }
 
@@ -32,7 +55,7 @@ t_struct	*ft_addfront_fd(t_struct **astruct, int fd)
 	if (!(new = (t_struct *)malloc(sizeof(*new))))
 		return (NULL);
 	new->fd = fd;
-	if (!(new->list = ft_lstnew(NULL)))
+	if (!(new->list = ft_lstnew_gnl(fd)))
 	{
 		free(new);
 		return (NULL);
@@ -44,16 +67,15 @@ t_struct	*ft_addfront_fd(t_struct **astruct, int fd)
 
 void		ft_total_remove_fd(t_struct **begin_fd, t_struct *to_delete_fd)
 {
-	t_list		*current;
-	t_list		*then;
+	t_gnl		*current;
+	t_gnl		*then;
 	t_struct	*tmp_fd;
 
 	current = to_delete_fd->list;
 	while (current)
 	{
 		then = current->next;
-		if (current->tab)
-			free(current->tab);
+		free(current->tab);
 		free(current);
 		current = then;
 	}
@@ -77,7 +99,7 @@ int			get_next_line(int fd, char **line)
 	t_struct			*right_fd;
 
 	right_fd = begin_fd;
-	if (!line || fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (-1);
 	while (right_fd && right_fd->fd != fd)
 		right_fd = right_fd->next;
@@ -87,7 +109,12 @@ int			get_next_line(int fd, char **line)
 			return (-1);
 		right_fd = begin_fd;
 	}
-	return_value = ft_get_line(fd, line, &(right_fd->list));
+	if (!line)
+	{
+		ft_total_remove_fd(&begin_fd, right_fd);
+		return (0);
+	}
+	return_value = ft_gnl(fd, line, &(right_fd->list));
 	if (return_value == 0 || return_value == (-1))
 		ft_total_remove_fd(&begin_fd, right_fd);
 	return (return_value);

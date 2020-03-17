@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mli <marvin@42.fr>                         +#+  +:+       +#+        */
+/*   By: mli <mli@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 11:43:26 by mli               #+#    #+#             */
-/*   Updated: 2019/11/11 12:23:31 by mli              ###   ########.fr       */
+/*   Updated: 2020/03/17 18:37:01 by mli              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,27 @@
 # include <unistd.h>
 # include <stdlib.h>
 
-typedef struct	s_list
+# define BUFFER_SIZE 50
+
+typedef struct	s_gnl
 {
 	int				min;
 	int				max;
 	char			*tab;
-	struct s_list	*next;
-}				t_list;
+	struct s_gnl	*next;
+}				t_gnl;
 
 typedef struct	s_struct
 {
 	int				fd;
-	t_list			*list;
+	t_gnl			*list;
 	struct s_struct	*next;
 }				t_struct;
 
 int				get_next_line(int fd, char **line);
-int				ft_get_line(int fd, char **line, t_list **alst);
+int				ft_gnl(int fd, char **line, t_gnl **alst);
 t_struct		*ft_addfront_fd(t_struct **astruct, int fd);
-t_list			*ft_lstnew(char *str);
+t_gnl			*ft_lstnew_gnl(int fd);
+void			ft_lstclear_gnl(t_gnl **alst);
 
 #endif
